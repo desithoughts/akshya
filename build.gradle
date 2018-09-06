@@ -1,0 +1,50 @@
+buildscript {
+    version = '2018.5.0'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
+        classpath "org.wildfly.swarm:wildfly-swarm-gradle-plugin:$version"
+    }
+}
+
+apply plugin: "io.spring.dependency-management"
+apply plugin: 'wildfly-swarm'
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'rest.fat.FatRest'
+
+swarm {
+    properties {
+        swarm.http.port = 8888
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url 'https://maven.repository.redhat.com/nexus/content/repositories/thirdparty-releases/'
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.wildfly.swarm:bom-all:$version"
+    }
+}
+
+dependencies {
+    compile "org.wildfly.swarm:jaxrs"
+}
+
+
+jar {
+    baseName = 'fat_rest'
+    version =  '0.0.1'
+}
